@@ -1,0 +1,47 @@
+# Registry entry for fake-llm-planner. Mirrors
+# trustchain/tests/fixtures/fake-engines/fake-llm-planner/engine.yaml.
+#
+# This engine exists specifically to drive the contract test suite's
+# uses_llm + required-secret paths (see
+# trustchain/tests/contract/test_engine_contract.py). The thin-slice
+# demo (fake-recon → fake-report) does NOT use it.
+
+id: fake-llm-planner
+version: 0.1.0
+stage: attack_plan
+entry: http://fake-llm-planner-svc:9103
+image: ghcr.io/trustchain/fake-llm-planner:0.1.0
+
+capabilities:
+  destructive: false
+  network_egress: false
+  uses_llm: true
+  writes_artifacts: false
+risk_level: low
+
+timeout_default: 60
+resource_profile:
+  memory_mb: 128
+  cpu: 0.1
+
+required_tools: []
+optional_tools: []
+secret_requirements:
+  - name: openai
+    required: true
+artifact_types: []
+
+input_schema: {}
+output_schema: {}
+
+config_schema:
+  type: object
+  properties:
+    num_steps:
+      type: integer
+      minimum: 0
+      maximum: 10
+      default: 2
+    objective_prefix:
+      type: string
+      default: "Test"

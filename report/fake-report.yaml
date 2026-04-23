@@ -1,0 +1,38 @@
+# Registry entry for fake-report. Mirrors trustchain/tests/fixtures/fake-engines/fake-report/engine.yaml.
+
+id: fake-report
+version: 0.1.0
+stage: report
+entry: http://fake-report-svc:9102
+# Bundled with trustchain-core at trustchain/tests/fixtures/fake-engines/fake-report/
+image: ghcr.io/trustchain/fake-report:0.1.0
+
+capabilities:
+  destructive: false
+  network_egress: false
+  uses_llm: false
+  writes_artifacts: true
+risk_level: low
+
+timeout_default: 60
+resource_profile:
+  memory_mb: 128
+  cpu: 0.1
+
+required_tools: []
+optional_tools: []
+secret_requirements: []
+artifact_types: [report]
+
+input_schema: {}
+output_schema: {}
+
+config_schema:
+  type: object
+  properties:
+    title:
+      type: string
+      default: "Pentest Report (demo)"
+    include_upstream_summary:
+      type: boolean
+      default: true

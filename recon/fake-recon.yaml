@@ -1,0 +1,43 @@
+# Registry entry for fake-recon. Mirrors trustchain/tests/fixtures/fake-engines/fake-recon/engine.yaml
+# — registry parses THIS file on boot and cross-checks against the engine's
+# GET /schema endpoint. Drift → engine marked mismatch, not scheduled.
+
+id: fake-recon
+version: 0.1.0
+stage: recon
+entry: http://fake-recon-svc:9101
+# Bundled with trustchain-core at trustchain/tests/fixtures/fake-engines/fake-recon/
+image: ghcr.io/trustchain/fake-recon:0.1.0
+
+capabilities:
+  destructive: false
+  network_egress: false
+  uses_llm: false
+  writes_artifacts: true
+risk_level: low
+
+timeout_default: 60
+resource_profile:
+  memory_mb: 128
+  cpu: 0.1
+
+required_tools: []
+optional_tools: []
+secret_requirements: []
+artifact_types: [screenshot, raw_output]
+
+input_schema: {}
+output_schema:
+  $ref: "trustchain-contracts://recon/ReconOutput"
+
+config_schema:
+  type: object
+  properties:
+    simulate_latency_ms:
+      type: integer
+      minimum: 0
+      maximum: 10000
+      default: 100
+    framework:
+      type: string
+      default: "flask"
