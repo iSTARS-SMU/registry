@@ -5,11 +5,11 @@
 # GET /schema response (drift → mismatch, stops dispatching).
 
 id: recon-targetinfo
-version: 0.1.0
+version: 0.1.1
 stage: recon
 entry: http://recon-targetinfo-svc:9601
 source_repo: https://github.com/iSTARS-SMU/recon-targetinfo
-image: ghcr.io/istars-smu/recon-targetinfo:0.1.0
+image: ghcr.io/istars-smu/recon-targetinfo:0.1.1
 
 # Recon is read-only. uses_llm=true because GPT extracts a TechFingerprint
 # from nmap -sV output + discovered paths. writes_artifacts=true for the
