@@ -2,6 +2,21 @@
 
 **核心仓对 engine 的唯一引用**。只放 yaml 清单,**不放任何代码**。
 
+> **Bundled fake-engine fixtures only.** 真正的部署 registry 在
+> [`iSTARS-SMU/registry`](https://github.com/iSTARS-SMU/registry) ——
+> 学生提交的 engine yaml PR 进那个仓,**不进这个目录**。这里只保留
+> `fake-recon` / `fake-report` / `fake-llm-planner` 等 thin-slice demo +
+> contract-test 用的 fixture,确保 `git clone` 后跑测试零额外步骤就能过。
+>
+> 部署时切换到 org registry:
+> ```
+> git clone git@github.com:iSTARS-SMU/registry external/registry
+> TRUSTCHAIN_REGISTRY_DIR=./external/registry bash trustchain/scripts/compose.sh up
+> ```
+>
+> 同步本目录的 fake yaml 到 org registry(如果改了的话):
+> `bash trustchain/scripts/sync-mirrors.sh registry`
+
 ## 结构
 每个 active stage 一个子目录(见 [spec §3.2](../../doc/spec.md)):
 ```
