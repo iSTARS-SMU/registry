@@ -1,0 +1,84 @@
+# Registry entry for recon-targetinfo — the first real (non-fake) recon engine.
+# Migrated from LLMAppSec/services/targetinfo-agent/ in Phase 2 of the
+# TrustChain buildout. Source canonically lives at iSTARS-SMU/recon-targetinfo;
+# registry parses this file on boot and cross-checks the engine's
+# GET /schema response (drift → mismatch, stops dispatching).
+
+id: recon-targetinfo
+version: 0.1.0
+stage: recon
+entry: http://recon-targetinfo-svc:9601
+source_repo: https://github.com/iSTARS-SMU/recon-targetinfo
+image: ghcr.io/istars-smu/recon-targetinfo:0.1.0
+
+# Recon is read-only. uses_llm=true because GPT extracts a TechFingerprint
+# from nmap -sV output + discovered paths. writes_artifacts=true for the
+# raw_output artifact saved per tool call.
+capabilities:
+  destructive: false
+  network_egress: true
+  uses_llm: true
+  writes_artifacts: true
+risk_level: low
+
+timeout_default: 600
+resource_profile:
+  memory_mb: 512
+  cpu: 0.5
+
+required_tools:
+  - nmap
+  - feroxbuster
+optional_tools:
+  - nuclei
+  - http_fetch
+secret_requirements:
+  - name: openai
+    required: true
+artifact_types:
+  - raw_output
+
+input_schema: {}
+output_schema:
+  $ref: "trustchain-contracts://recon/ReconOutput"
+
+config_schema:
+  type: object
+  properties:
+    llm_model:
+      type: string
+      default: "gpt-4o"
+      description: "OpenAI model for the recon-summary LLM call."
+    nmap_mode:
+      type: string
+      enum: [basic, comprehensive, web]
+      default: basic
+      description: "Scan depth handed to ctx.call_tool('nmap', {mode: ...})."
+    nmap_timeout_s:
+      type: integer
+      minimum: 10
+      maximum: 1800
+      default: 300
+      description: "Hard cap on the nmap subprocess."
+    feroxbuster_timeout_s:
+      type: integer
+      minimum: 10
+      maximum: 1800
+      default: 300
+      description: "Hard cap on the feroxbuster subprocess."
+    save_raw_outputs:
+      type: boolean
+      default: true
+      description: "Persist each tool's raw stdout as a kind=raw_output artifact."
+    llm_input_max_chars:
+      type: integer
+      minimum: 500
+      maximum: 50000
+      default: 4000
+      description: "Cap on nmap stdout chars fed to the LLM fingerprint prompt."
+    llm_max_endpoints:
+      type: integer
+      minimum: 5
+      maximum: 200
+      default: 30
+      description: "Cap on discovered endpoint paths fed to the LLM prompt."
