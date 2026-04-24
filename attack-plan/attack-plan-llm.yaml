@@ -1,0 +1,50 @@
+# Registry entry for attack-plan-llm. Mirrors
+# trustchain/examples/attack-plan-llm/engine.yaml — registry parses
+# THIS file on boot and cross-checks against the engine's GET /schema.
+
+id: attack-plan-llm
+version: 0.1.0
+stage: attack_plan
+entry: http://attack-plan-llm-svc:9603
+image: ghcr.io/istars-smu/attack-plan-llm:0.1.0
+
+capabilities:
+  destructive: false
+  network_egress: false
+  uses_llm: true
+  writes_artifacts: true
+risk_level: low
+
+timeout_default: 180
+resource_profile:
+  memory_mb: 256
+  cpu: 0.25
+
+required_tools: []
+optional_tools: []
+
+secret_requirements:
+  - name: openai
+    required: true
+
+artifact_types: [raw_output]
+
+input_schema:
+  $ref: "trustchain-contracts://attack_plan/WeaknessGatherOutput"
+output_schema:
+  $ref: "trustchain-contracts://attack_plan/AttackPlan"
+
+config_schema:
+  type: object
+  properties:
+    max_steps:
+      type: integer
+      minimum: 1
+      maximum: 50
+      default: 10
+    force_safe_mode:
+      type: boolean
+      default: true
+    save_intermediate:
+      type: boolean
+      default: true
