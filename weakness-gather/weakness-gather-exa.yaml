@@ -1,0 +1,53 @@
+# Registry entry for weakness-gather-exa. Mirrors
+# trustchain/examples/weakness-gather-exa/engine.yaml — registry parses
+# THIS file on boot and cross-checks against the engine's GET /schema
+# endpoint. Drift → engine marked mismatch, not scheduled.
+
+id: weakness-gather-exa
+version: 0.1.0
+stage: weakness_gather
+entry: http://weakness-gather-exa-svc:9602
+image: ghcr.io/istars-smu/weakness-gather-exa:0.1.0
+
+capabilities:
+  destructive: false
+  network_egress: true
+  uses_llm: true
+  writes_artifacts: true
+risk_level: low
+
+timeout_default: 300
+resource_profile:
+  memory_mb: 512
+  cpu: 0.5
+
+required_tools:
+  - nvd-search
+  - exa-search
+optional_tools: []
+
+secret_requirements:
+  - name: openai
+    required: true
+
+artifact_types: [raw_output]
+
+input_schema:
+  $ref: "trustchain-contracts://weakness_gather/ReconOutput"
+output_schema:
+  $ref: "trustchain-contracts://weakness_gather/WeaknessGatherOutput"
+
+config_schema:
+  type: object
+  properties:
+    max_exa_queries:
+      type: integer
+      minimum: 1
+      maximum: 10
+      default: 5
+    nvd_severity_filter:
+      type: string
+      default: "HIGH,CRITICAL"
+    save_raw_outputs:
+      type: boolean
+      default: true
